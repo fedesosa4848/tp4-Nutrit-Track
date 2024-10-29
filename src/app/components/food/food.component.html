@@ -1,0 +1,25 @@
+<h2>Resultados para "{{ foodItem }}"</h2>
+<input type="text" [(ngModel)]="foodItem" (input)="onSearchChange()" placeholder="Buscar alimento..." />
+<input type="number" [(ngModel)]="amountInGrams" placeholder="Cantidad en gramos" />
+
+<ul>
+  <li *ngFor="let food of foodData">
+    <p>{{ food.description }}</p>
+    <p>Calorías para {{ amountInGrams }} g: {{ calculateNutrientsForAmount(food).calories | number:'1.0-0' }} kcal</p>
+    <p>Proteínas: {{ calculateNutrientsForAmount(food).protein | number:'1.1-1' }} g</p>
+    <p>Carbohidratos: {{ calculateNutrientsForAmount(food).carbs | number:'1.1-1' }} g</p>
+    <p>Grasas: {{ calculateNutrientsForAmount(food).fat | number:'1.1-1' }} g</p>
+
+    <div *ngIf="isLoggedIn">
+        <select [(ngModel)]="selectedMeal">
+            <option value="" disabled>Selecciona una comida</option>
+            <option value="Breakfast">Desayuno</option>
+            <option value="Lunch">Almuerzo</option>
+            <option value="Snack">Merienda</option>
+            <option value="Dinner">Cena</option>
+            <option value="Dessert">Postre</option>
+        </select>
+        <button (click)="addFoodToMeal(food)">Agregar</button>
+    </div>
+  </li>
+</ul>

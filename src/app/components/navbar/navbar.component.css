@@ -1,0 +1,36 @@
+nav {
+    background-color: #333;
+    padding: 1rem;
+  }
+  
+  .nav-list {
+    list-style: none;
+    display: flex;
+    justify-content: space-between; /* Espacio entre los elementos */
+    align-items: center; /* Alineación vertical centrada */
+    margin: 0;
+    padding: 0;
+    width: 100%; /* Usa todo el ancho del nav */
+  }
+  
+  .nav-left,
+  .nav-right {
+    display: flex; /* Hacemos que los grupos sean contenedores flex */
+  }
+  
+  .nav-list li {
+    margin: 0 1rem; /* Espaciado entre los elementos de la lista */
+  }
+  
+  .nav-item {
+    text-decoration: none; /* Elimina el subrayado */
+    color: white; /* Color del texto */
+    padding: 0.5rem 1rem; /* Espaciado interno */
+    border-radius: 5px; /* Bordes redondeados */
+    transition: background-color 0.3s; /* Transición para el hover */
+  }
+  
+  .nav-item:hover {
+    background-color: #555; /* Cambia el color de fondo al pasar el ratón */
+  }
+  

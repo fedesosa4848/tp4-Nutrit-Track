@@ -1,0 +1,26 @@
+<div *ngIf="user">
+    <h2>Perfil de {{ user.dataUser.nombre }} {{ user.dataUser.apellido }}</h2>
+    <p>Email: {{ user.dataUser.email }}</p>
+    <p>Edad: {{ user.dataUser.edad }}</p>
+    <p>Peso: {{ user.dataUser.peso }} kg</p>
+    <p>Altura: {{ user.dataUser.altura }} cm</p>
+    <p>Género: {{ user.dataUser.genero }}</p>
+    <p>Perfil: {{ user.dataUser.perfil }}</p>
+    <p>Nivel de Actividad: {{ user.dataUser.nivelActividad }}</p>
+  
+    <h3>Datos Nutricionales</h3>
+    <p>TMB: {{ user.dataUserNutricional.tmb }} kcal</p>
+    <p>TDEE: {{ user.dataUserNutricional.tdee }} kcal</p>
+    <p>Calorías Objetivo: {{ user.dataUserNutricional.caloriasObjetivo }} kcal</p>
+    <p>Macronutrientes:</p>
+    <ul>
+      <li>Proteínas: {{ user.dataUserNutricional.macronutrientes.proteinas }} g</li>
+      <li>Grasas: {{ user.dataUserNutricional.macronutrientes.grasas }} g</li>
+      <li>Carbohidratos: {{ user.dataUserNutricional.macronutrientes.carbohidratos }} g</li>
+    </ul>
+  </div>
+  
+  <div *ngIf="!user">
+    <p>No se pudo cargar el perfil del usuario.</p>
+  </div>
+  

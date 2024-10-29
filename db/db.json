@@ -1,0 +1,32 @@
+{
+  "users": [
+    {
+      "id": "e3be",
+      "dataUser": {
+        "nombre": "Federico",
+        "apellido": "Sosa",
+        "email": "fede_mdq1@hotmail.com",
+        "password": "pass123456",
+        "edad": 28,
+        "peso": 77,
+        "altura": 168,
+        "genero": "masculino",
+        "perfil": "volumen",
+        "nivelActividad": "ligero"
+      },
+      "dataUserNutricional": {
+        "tmb": 1685,
+        "tdee": 2316.875,
+        "caloriasObjetivo": 2548.5625,
+        "macronutrientes": {
+          "proteinas": 148,
+          "grasas": 71,
+          "carbohidratos": 330
+        }
+      }
+    }
+  ],
+  "userMeals": [
+   
+  ]
+}

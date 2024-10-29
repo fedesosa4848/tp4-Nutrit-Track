@@ -1,0 +1,48 @@
+.container {
+    display: grid;
+    grid-template-columns: 0.7fr 1.9fr 0.9fr;
+    grid-template-rows: 0.2fr 2.6fr 0.2fr;
+    gap: 0px 0px;
+    grid-template-areas:
+        "nav-bar nav-bar nav-bar"
+        "aside-nav main aside-content"
+        "footer footer footer";
+    min-height: 100vh; /* Asegura que el contenedor ocupe al menos la altura de la ventana */
+    max-width: 1200px; /* Ajusta este valor según sea necesario */
+    margin: 0 auto; /* Centra el contenedor horizontalmente */
+    padding: 0 20px; /* Agrega un poco de padding si es necesario */
+}
+
+/* Layout Responsivo */
+@media (max-width: 768px) {
+    .container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        grid-template-areas:
+            "nav-bar"
+            "aside-nav"
+            "main"
+            "aside-content"
+            "footer";
+    }
+}
+
+.nav-bar { 
+    grid-area: nav-bar; 
+}
+.aside-nav { grid-area: aside-nav; }
+.main { grid-area: main; }
+.aside-content { grid-area: aside-content; }
+.footer {
+    position: fixed; /* Fija el footer en la parte inferior */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #333;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    z-index: 1000; /* Asegúrate de que el footer esté por encima de otros elementos */
+}
+
+

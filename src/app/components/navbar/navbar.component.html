@@ -1,0 +1,17 @@
+<nav>
+    <ul class="nav-list">
+      <div class="nav-left">
+        <li><a class="nav-item" (click)="navigateToHome()">Home</a></li>
+        <li><a class="nav-item" (click)="navigateToAboutUs()">About Us</a></li>
+        <li><a class="nav-item" (click)="navigateToSearchFoods()">Search Foods</a></li>
+        <li><a *ngIf="isLoggedIn" class="nav-item" (click)="navigateToUserMeals()">Meals</a></li>
+      </div>
+      <div class="nav-right">
+        <li *ngIf="!isLoggedIn"><a class="nav-item" (click)="login()">Sign In</a></li>
+        <li *ngIf="!isLoggedIn"><a class="nav-item" (click)="navigateToRegister()">Sign Up</a></li>
+        <li *ngIf="isLoggedIn"><a class="nav-item" (click)="logout()">Logout</a></li>
+        <li *ngIf="isLoggedIn"><a class="nav-item" (click)="navigateToUserProfile()">Profile</a></li>
+      </div>
+    </ul>
+  </nav>
+  

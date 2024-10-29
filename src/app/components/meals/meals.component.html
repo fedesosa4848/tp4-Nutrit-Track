@@ -1,0 +1,18 @@
+<h2>Comidas</h2>
+<p><strong>Total Calorías de todas las comidas: {{ totalCalories }}</strong></p>
+
+<div *ngFor="let meal of meals">
+  <h3>{{ meal.name }}</h3>
+
+  <ul>
+    <li *ngFor="let food of meal.foods">
+      {{ food.description }} - Calorías: {{ getCalories(food) }}
+    </li>
+    <li *ngIf="meal.foods.length === 0">No hay alimentos en esta comida.</li>
+  </ul>
+
+  <p><strong>Total Calorías: {{ meal.totalCalories }}</strong></p>
+  <p *ngIf="meal.totalProteins">Proteínas: {{ meal.totalProteins }}g</p>
+  <p *ngIf="meal.totalCarbs">Carbohidratos: {{ meal.totalCarbs }}g</p>
+  <p *ngIf="meal.totalFats">Grasas: {{ meal.totalFats }}g</p>
+</div>

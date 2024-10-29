@@ -1,0 +1,24 @@
+<h1>Nutrit-Track: Tu Compañero en Nutrición y Bienestar</h1>
+
+
+<div class="nutrit-track-info">
+  <h2 *ngIf="userName; else noUser">
+    Bienvenido <strong>{{ userName }}</strong> a Nutrit-Track !
+  </h2>
+
+  <ng-template #noUser>
+    <h2>Bienvenido!</h2>
+  </ng-template>
+
+  <p><strong>Nutrit-Track</strong> es tu compañero ideal en el camino hacia una vida más saludable y equilibrada. Diseñada para ayudarte a llevar un control completo de tu nutrición, nuestra aplicación te permite registrar tus comidas, seguir tus macros y calorías, y establecer objetivos personalizados que se ajusten a tus necesidades.</p>
+
+  <h3>Características Principales:</h3>
+  <ul>
+    <li><strong>Registro de Comidas:</strong> Agrega fácilmente tus comidas diarias y obtén un desglose detallado de los nutrientes que consumes.</li>
+    <li><strong>Seguimiento de Macronutrientes:</strong> Controla tu ingesta de proteínas, carbohidratos y grasas para asegurarte de que estás cumpliendo tus objetivos nutricionales.</li>
+    <li><strong>Planes Personalizados:</strong> Crea planes de alimentación adaptados a tus metas, ya sea perder peso, ganar músculo o simplemente llevar un estilo de vida más saludable.</li>
+    <li><strong>Estadísticas y Progreso:</strong> Visualiza tu progreso a lo largo del tiempo con gráficos intuitivos que muestran cómo estás avanzando hacia tus metas.</li>
+    <li><strong>Comunidad y Soporte:</strong> Conéctate con otros usuarios, comparte tus logros y recibe apoyo en tu viaje hacia una vida más saludable.</li>
+  </ul>
+  <p>Con <strong>Nutrit-Track</strong>, nunca ha sido tan fácil cuidar de tu salud y bienestar. Únete a nuestra comunidad y comienza tu viaje hacia una mejor nutrición hoy mismo. ¡Tu cuerpo te lo agradecerá!</p>
+</div>
