@@ -35,29 +35,36 @@ export class FoodComponent implements OnInit {
       this.foodData = [];
       return;
     }
-
-    this.foodService.getFood(this.foodItem).subscribe((data: { foods: Food[] }) => {
+  
+    this.foodService.getFood(this.foodItem).subscribe((foods: Food[]) => {
+      // Filtramos para obtener descripciones únicas
       const uniqueDescriptions = new Set<string>();
       const uniqueFoods: Food[] = [];
-
-      data.foods.forEach(food => {
-        if (food.description.toLowerCase().includes(this.foodItem.toLowerCase()) && !uniqueDescriptions.has(food.description.toLowerCase())) {
+  
+      foods.forEach(food => {
+        if (
+          food.description.toLowerCase().includes(this.foodItem.toLowerCase()) &&
+          !uniqueDescriptions.has(food.description.toLowerCase())
+        ) {
           uniqueDescriptions.add(food.description.toLowerCase());
           uniqueFoods.push(food);
         }
       });
-
-      this.foodData = uniqueFoods.slice(0, 13);
+  
+      this.foodData = uniqueFoods.slice(0, 13); // Mostramos los primeros 13 resultados
+  
+      // Calculamos los valores nutricionales
       this.foodData.forEach(food => {
         const calories = food.foodNutrients.find(n => n.nutrientName === 'Energy')?.value || 0;
         const protein = food.foodNutrients.find(n => n.nutrientName === 'Protein')?.value || 0;
         const carbs = food.foodNutrients.find(n => n.nutrientName === 'Carbohydrate, by difference')?.value || 0;
         const fat = food.foodNutrients.find(n => n.nutrientName === 'Total lipid (fat)')?.value || 0;
-
+  
         this.foodNutritionalInfo[food.description] = { calories, protein, carbs, fat };
       });
     });
   }
+  
 
   onSearchChange(): void {
     this.searchFood();

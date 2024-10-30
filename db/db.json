@@ -1,7 +1,7 @@
 {
   "users": [
     {
-      "id": "e3be",
+      "id": "ea83",
       "dataUser": {
         "nombre": "Federico",
         "apellido": "Sosa",
@@ -9,24 +9,126 @@
         "password": "pass123456",
         "edad": 28,
         "peso": 77,
-        "altura": 168,
+        "altura": 167,
         "genero": "masculino",
         "perfil": "volumen",
         "nivelActividad": "ligero"
       },
       "dataUserNutricional": {
-        "tmb": 1685,
-        "tdee": 2316.875,
-        "caloriasObjetivo": 2548.5625,
+        "tmb": 1678.75,
+        "tdee": 2308.28125,
+        "caloriasObjetivo": 2539.109375,
         "macronutrientes": {
           "proteinas": 148,
           "grasas": 71,
-          "carbohidratos": 330
+          "carbohidratos": 328
         }
       }
     }
   ],
   "userMeals": [
-   
+    {
+      "id": "ea83",
+      "meals": [
+        {
+          "name": "BreakFast",
+          "foods": [
+            {
+              "description": "BREAD",
+              "ingredients": "UNBLEACHED WHEAT FLOUR, FILTERED WATER, SOURDOUGH STARTER (UNBLEACHED WHEAT FLOUR, WATER, RYE FLOUR), SEA SALT, MALTED BARLEY FLOUR.",
+              "foodNutrients": [
+                {
+                  "nutrientName": "Protein",
+                  "unitName": "G",
+                  "value": 7.89
+                },
+                {
+                  "nutrientName": "Total lipid (fat)",
+                  "unitName": "G",
+                  "value": 0
+                },
+                {
+                  "nutrientName": "Carbohydrate, by difference",
+                  "unitName": "G",
+                  "value": 55.3
+                },
+                {
+                  "nutrientName": "Energy",
+                  "unitName": "KCAL",
+                  "value": 263
+                }
+              ]
+            }
+          ],
+          "totalCalories": 325,
+          "totalProteins": 11.22,
+          "totalCarbs": 60.72,
+          "totalFats": 3.33
+        },
+        {
+          "name": "Lunch",
+          "foods": [],
+          "totalCalories": 0,
+          "totalProteins": 0,
+          "totalCarbs": 0,
+          "totalFats": 0
+        },
+        {
+          "name": "Snack",
+          "foods": [
+            {
+              "description": "McDONALD'S, BIG MAC (without Big Mac Sauce)",
+              "foodNutrients": [
+                {
+                  "nutrientName": "Protein",
+                  "unitName": "G",
+                  "value": 12.8
+                },
+                {
+                  "nutrientName": "Energy",
+                  "unitName": "kJ",
+                  "value": 978
+                },
+                {
+                  "nutrientName": "Total lipid (fat)",
+                  "unitName": "G",
+                  "value": 11.6
+                },
+                {
+                  "nutrientName": "Carbohydrate, by difference",
+                  "unitName": "G",
+                  "value": 21
+                },
+                {
+                  "nutrientName": "Energy",
+                  "unitName": "KCAL",
+                  "value": 234
+                }
+              ]
+            }
+          ],
+          "totalCalories": 978,
+          "totalProteins": 12.8,
+          "totalCarbs": 21,
+          "totalFats": 11.6
+        },
+        {
+          "name": "Dinner",
+          "foods": [],
+          "totalCalories": 0,
+          "totalProteins": 0,
+          "totalCarbs": 0,
+          "totalFats": 0
+        },
+        {
+          "name": "Dessert",
+          "foods": [],
+          "totalCalories": 0,
+          "totalProteins": 0,
+          "totalCarbs": 0,
+          "totalFats": 0
+        }
+      ]
+    }
   ]
 }

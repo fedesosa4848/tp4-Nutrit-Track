@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Meal, Food, UserMeals } from '../interfaces/food.interface';
-
+import { catchError } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root',
 })
@@ -20,14 +20,18 @@ export class MealService {
 
   // Método para cargar las comidas desde JSON Server
   private loadMeals(): void {
-    this.http.get<UserMeals[]>(`${this.apiUrl}?userId=${this.userId}`)
+    if (!this.userId) {
+      console.error('No hay un usuario autenticado');
+      return;
+    }
+  
+    this.http.get<UserMeals>(`${this.apiUrl}/${this.userId}`)
       .pipe(
         map((userMeals) => {
-          // Filtrar por el usuario y asegurarse de que el usuario tenga las 5 comidas
-          const userMealsData = userMeals.find(um => um.userId === this.userId);
-          const meals = userMealsData ? userMealsData.meals : [];
-
+          const meals = userMeals?.meals || [];
           const requiredMeals = ['BreakFast', 'Lunch', 'Snack', 'Dinner', 'Dessert'];
+  
+          // Añadir comidas requeridas si faltan
           requiredMeals.forEach((mealName) => {
             if (!meals.some(meal => meal.name === mealName)) {
               meals.push({
@@ -40,7 +44,26 @@ export class MealService {
               });
             }
           });
+  
           return meals;
+        }),
+        catchError((error) => {
+          if (error.status === 404) {
+            // Si no existe el recurso, creamos una entrada nueva para este usuario
+            const newUserMeals: UserMeals = {
+              id: this.userId as string,
+              meals: [
+                { name: 'BreakFast', foods: [], totalCalories: 0, totalProteins: 0, totalCarbs: 0, totalFats: 0 },
+                { name: 'Lunch', foods: [], totalCalories: 0, totalProteins: 0, totalCarbs: 0, totalFats: 0 },
+                { name: 'Snack', foods: [], totalCalories: 0, totalProteins: 0, totalCarbs: 0, totalFats: 0 },
+                { name: 'Dinner', foods: [], totalCalories: 0, totalProteins: 0, totalCarbs: 0, totalFats: 0 },
+                { name: 'Dessert', foods: [], totalCalories: 0, totalProteins: 0, totalCarbs: 0, totalFats: 0 },
+              ],
+            };
+            // Crear el nuevo recurso en JSON Server
+            return this.http.post<UserMeals>(this.apiUrl, newUserMeals).pipe(map(() => newUserMeals.meals));
+          }
+          throw error;
         })
       )
       .subscribe((meals) => this.mealsSubject.next(meals));
@@ -107,11 +130,43 @@ export class MealService {
 
   private updateUserMeals(meals: Meal[]) {
     const userMeals: UserMeals = {
-      userId: this.userId as string,
+      id: this.userId as string,
       meals: meals,
     };
 
     // Actualizar las comidas del usuario en JSON Server
     this.http.put(`${this.apiUrl}/${this.userId}`, userMeals).subscribe();
   }
+
+
+  removeFoodFromMeal(mealName: string, foodDescription: string): void {
+    if (!this.userId) {
+      console.error('No hay un usuario autenticado');
+      return;
+    }
+
+    const currentMeals = this.mealsSubject.getValue();
+    const meal = currentMeals.find(m => m.name === mealName);
+
+    if (meal) {
+      // Eliminar el alimento de la comida
+      const foodIndex = meal.foods.findIndex(food => food.description === foodDescription);
+      if (foodIndex !== -1) {
+        // Calcular los nutrientes a eliminar
+        const nutrientsToRemove = this.calculateNutrients(meal.foods[foodIndex], 100); // Ajusta según sea necesario
+        meal.foods.splice(foodIndex, 1);
+        
+        // Restar nutrientes asegurándote de que no sean undefined
+        meal.totalCalories -= nutrientsToRemove.calories;
+        meal.totalProteins = (meal.totalProteins ?? 0) - nutrientsToRemove.proteins;
+        meal.totalCarbs = (meal.totalCarbs ?? 0) - nutrientsToRemove.carbs;
+        meal.totalFats = (meal.totalFats ?? 0) - nutrientsToRemove.fats;
+
+        // Actualizar la comida en JSON Server
+        this.updateUserMeals(currentMeals);
+      }
+    }
+}
+
+
 }

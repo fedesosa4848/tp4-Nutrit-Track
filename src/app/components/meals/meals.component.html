@@ -1,18 +1,30 @@
 <h2>Comidas</h2>
 <p><strong>Total Calorías de todas las comidas: {{ totalCalories }}</strong></p>
 
-<div *ngFor="let meal of meals">
+<div *ngFor="let meal of meals; let i = index">
   <h3>{{ meal.name }}</h3>
 
   <ul>
     <li *ngFor="let food of meal.foods">
       {{ food.description }} - Calorías: {{ getCalories(food) }}
+      <button (click)="removeFood(meal, food)">Eliminar</button>
     </li>
-    <li *ngIf="meal.foods.length === 0">No hay alimentos en esta comida.</li>
   </ul>
+
+  <p *ngIf="meal.foods.length === 0">No hay alimentos en esta comida.</p>
 
   <p><strong>Total Calorías: {{ meal.totalCalories }}</strong></p>
   <p *ngIf="meal.totalProteins">Proteínas: {{ meal.totalProteins }}g</p>
   <p *ngIf="meal.totalCarbs">Carbohidratos: {{ meal.totalCarbs }}g</p>
   <p *ngIf="meal.totalFats">Grasas: {{ meal.totalFats }}g</p>
+
+  <!-- Muestra el botón solo si hay alimentos en la comida -->
+  <button *ngIf="meal.foods.length > 0" (click)="toggleChart(i)">Mostrar/Ocultar Gráfico</button>
+
+  <app-macronutrient-chart
+    *ngIf="showCharts[i]" 
+    [totalProteins]="meal.totalProteins"
+    [totalCarbs]="meal.totalCarbs"
+    [totalFats]="meal.totalFats">
+  </app-macronutrient-chart>
 </div>

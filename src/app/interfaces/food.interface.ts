@@ -8,10 +8,12 @@ export interface Nutrient {
 // Interfaz para representar los alimentos
 export interface Food {
     description: string; // Descripción del alimento
+    ingredients: string;
     foodNutrients: Nutrient[]; // Nutrientes del alimento
     selectedMeal?: string; // Identificador de la comida a la que está asociado
     amountInGrams?: number; // Cantidad de alimento en gramos
 }
+
 
 // Interfaz para representar una comida
 export interface Meal {
@@ -25,6 +27,6 @@ export interface Meal {
 
 // Interfaz para representar las comidas de un usuario
 export interface UserMeals {
-    userId: string; // ID del usuario
+    id?: string; // ID del usuario
     meals: Meal[]; // Array de comidas
 }
