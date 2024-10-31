@@ -3,21 +3,21 @@ import { MealService } from '../../services/meals.service';
 import { Food, Meal } from '../../interfaces/food.interface';
 import { CommonModule } from '@angular/common';
 import { MacronutrientChartComponent } from '../../macronutrient-chart/macronutrient-chart.component';
-import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts'; // Importa el módulo
+import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts'; 
 
 @Component({
   selector: 'app-meals',
   standalone: true,
   imports: [CommonModule,MacronutrientChartComponent,CanvasJSAngularChartsModule],
   templateUrl: './meals.component.html',
-  styleUrls: ['./meals.component.css'] // Corregido de 'styleUrl' a 'styleUrls'
+  styleUrls: ['./meals.component.css'] 
 })
 export class MealsComponent implements OnInit {
 
   showCharts: boolean[] = []; // Arreglo para manejar el estado de los gráficos
 
   meals: Meal[] = [];
-  totalCalories: number = 0; // Nueva variable para almacenar las calorías totales
+  totalCalories: number = 0; //  variable para almacenar las calorías totales
 
   constructor(private mealService: MealService) {}
 

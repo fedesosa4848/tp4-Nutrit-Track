@@ -32,38 +32,11 @@
       "meals": [
         {
           "name": "BreakFast",
-          "foods": [
-            {
-              "description": "BREAD",
-              "ingredients": "UNBLEACHED WHEAT FLOUR, FILTERED WATER, SOURDOUGH STARTER (UNBLEACHED WHEAT FLOUR, WATER, RYE FLOUR), SEA SALT, MALTED BARLEY FLOUR.",
-              "foodNutrients": [
-                {
-                  "nutrientName": "Protein",
-                  "unitName": "G",
-                  "value": 7.89
-                },
-                {
-                  "nutrientName": "Total lipid (fat)",
-                  "unitName": "G",
-                  "value": 0
-                },
-                {
-                  "nutrientName": "Carbohydrate, by difference",
-                  "unitName": "G",
-                  "value": 55.3
-                },
-                {
-                  "nutrientName": "Energy",
-                  "unitName": "KCAL",
-                  "value": 263
-                }
-              ]
-            }
-          ],
-          "totalCalories": 325,
-          "totalProteins": 11.22,
-          "totalCarbs": 60.72,
-          "totalFats": 3.33
+          "foods": [],
+          "totalCalories": 0,
+          "totalProteins": 0,
+          "totalCarbs": 0,
+          "totalFats": 0
         },
         {
           "name": "Lunch",
@@ -75,42 +48,11 @@
         },
         {
           "name": "Snack",
-          "foods": [
-            {
-              "description": "McDONALD'S, BIG MAC (without Big Mac Sauce)",
-              "foodNutrients": [
-                {
-                  "nutrientName": "Protein",
-                  "unitName": "G",
-                  "value": 12.8
-                },
-                {
-                  "nutrientName": "Energy",
-                  "unitName": "kJ",
-                  "value": 978
-                },
-                {
-                  "nutrientName": "Total lipid (fat)",
-                  "unitName": "G",
-                  "value": 11.6
-                },
-                {
-                  "nutrientName": "Carbohydrate, by difference",
-                  "unitName": "G",
-                  "value": 21
-                },
-                {
-                  "nutrientName": "Energy",
-                  "unitName": "KCAL",
-                  "value": 234
-                }
-              ]
-            }
-          ],
-          "totalCalories": 978,
-          "totalProteins": 12.8,
-          "totalCarbs": 21,
-          "totalFats": 11.6
+          "foods": [],
+          "totalCalories": 0,
+          "totalProteins": 0,
+          "totalCarbs": 0,
+          "totalFats": 0
         },
         {
           "name": "Dinner",

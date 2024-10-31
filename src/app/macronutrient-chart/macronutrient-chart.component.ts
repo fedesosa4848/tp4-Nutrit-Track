@@ -32,6 +32,7 @@ export class MacronutrientChartComponent implements OnChanges {
       data: [{
         type: "doughnut",
         indexLabel: "{label}: {y}g",
+        innerRadius: "80%",
         dataPoints: [
           { y: this.totalProteins, label: "Proteínas" },
           { y: this.totalCarbs, label: "Carbohidratos" },
