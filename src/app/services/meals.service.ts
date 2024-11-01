@@ -72,47 +72,55 @@ export class MealService {
   // Método para agregar un alimento a una comida
   addFoodToMeal(food: Food, mealName: string, amountInGrams: number) {
     if (!this.userId) {
-      console.error('No hay un usuario autenticado');
-      return;
+        console.error('No hay un usuario autenticado');
+        return;
     }
 
     const currentMeals = this.mealsSubject.getValue();
     const meal = currentMeals.find(m => m.name === mealName);
 
     if (meal) {
-      // Agregar alimento a la comida existente
-      meal.foods.push(food);
-      const nutrients = this.calculateNutrients(food, amountInGrams);
-      meal.totalCalories += nutrients.calories;
-      meal.totalProteins = (meal.totalProteins || 0) + nutrients.proteins;
-      meal.totalCarbs = (meal.totalCarbs || 0) + nutrients.carbs;
-      meal.totalFats = (meal.totalFats || 0) + nutrients.fats;
+        // Agregar alimento a la comida existente
+        meal.foods.push({
+            ...food,
+            amountInGrams // Aquí añadimos la cantidad en gramos al alimento
+        });
 
-      // Actualizar la comida en JSON Server
-      this.updateUserMeals(currentMeals);
+        const nutrients = this.calculateNutrients(food, amountInGrams);
+        meal.totalCalories += nutrients.calories;
+        meal.totalProteins = (meal.totalProteins || 0) + nutrients.proteins;
+        meal.totalCarbs = (meal.totalCarbs || 0) + nutrients.carbs;
+        meal.totalFats = (meal.totalFats || 0) + nutrients.fats;
+
+        // Actualizar la comida en JSON Server
+        this.updateUserMeals(currentMeals);
     } else {
-      // Crear nueva comida si no existe
-      const newMeal: Meal = {
-        name: mealName,
-        foods: [food],
-        totalCalories: 0,
-        totalProteins: 0,
-        totalCarbs: 0,
-        totalFats: 0,
-      };
+        // Crear nueva comida si no existe
+        const newMeal: Meal = {
+            name: mealName,
+            foods: [{
+                ...food,
+                amountInGrams // Aquí añadimos la cantidad en gramos al alimento
+            }],
+            totalCalories: 0,
+            totalProteins: 0,
+            totalCarbs: 0,
+            totalFats: 0,
+        };
 
-      // Calcular nutrientes del nuevo alimento y agregar
-      const nutrients = this.calculateNutrients(food, amountInGrams);
-      newMeal.totalCalories = (newMeal.totalCalories ?? 0) + nutrients.calories;
-      newMeal.totalProteins = (newMeal.totalProteins ?? 0) + nutrients.proteins;
-      newMeal.totalCarbs = (newMeal.totalCarbs ?? 0) + nutrients.carbs;
-      newMeal.totalFats = (newMeal.totalFats ?? 0) + nutrients.fats;
+        // Calcular nutrientes del nuevo alimento y agregar
+        const nutrients = this.calculateNutrients(food, amountInGrams);
+        newMeal.totalCalories = (newMeal.totalCalories ?? 0) + nutrients.calories;
+        newMeal.totalProteins = (newMeal.totalProteins ?? 0) + nutrients.proteins;
+        newMeal.totalCarbs = (newMeal.totalCarbs ?? 0) + nutrients.carbs;
+        newMeal.totalFats = (newMeal.totalFats ?? 0) + nutrients.fats;
 
-      // Guardar la nueva comida en JSON Server
-      currentMeals.push(newMeal);
-      this.updateUserMeals(currentMeals);
+        // Guardar la nueva comida en JSON Server
+        currentMeals.push(newMeal);
+        this.updateUserMeals(currentMeals);
     }
-  }
+}
+
 
   getTotalCalories(): number {
     const currentMeals = this.mealsSubject.getValue();
@@ -141,32 +149,40 @@ export class MealService {
 
   removeFoodFromMeal(mealName: string, foodDescription: string): void {
     if (!this.userId) {
-      console.error('No hay un usuario autenticado');
-      return;
+        console.error('No hay un usuario autenticado');
+        return;
     }
 
     const currentMeals = this.mealsSubject.getValue();
     const meal = currentMeals.find(m => m.name === mealName);
 
     if (meal) {
-      // Eliminar el alimento de la comida
-      const foodIndex = meal.foods.findIndex(food => food.description === foodDescription);
-      if (foodIndex !== -1) {
-        // Calcular los nutrientes a eliminar
-        const nutrientsToRemove = this.calculateNutrients(meal.foods[foodIndex], 100); // Ajusta según sea necesario
-        meal.foods.splice(foodIndex, 1);
-        
-        // Restar nutrientes asegurándote de que no sean undefined
-        meal.totalCalories -= nutrientsToRemove.calories;
-        meal.totalProteins = (meal.totalProteins ?? 0) - nutrientsToRemove.proteins;
-        meal.totalCarbs = (meal.totalCarbs ?? 0) - nutrientsToRemove.carbs;
-        meal.totalFats = (meal.totalFats ?? 0) - nutrientsToRemove.fats;
+        // Eliminar el alimento de la comida
+        const foodIndex = meal.foods.findIndex(food => food.description === foodDescription);
+        if (foodIndex !== -1) {
+            // Obtener la cantidad en gramos del alimento a eliminar
+            const amountInGrams = meal.foods[foodIndex].amountInGrams ?? 0;
 
-        // Actualizar la comida en JSON Server
-        this.updateUserMeals(currentMeals);
-      }
+            // Calcular los nutrientes a eliminar
+            const nutrientsToRemove = this.calculateNutrients(meal.foods[foodIndex], amountInGrams); 
+
+            // Eliminar el alimento de la lista
+            meal.foods.splice(foodIndex, 1);
+            
+            // Restar nutrientes asegurándote de que no sean undefined
+            console.log(amountInGrams)
+            meal.totalCalories = Math.max(0, meal.totalCalories - nutrientsToRemove.calories); // Evitar negativos
+            meal.totalProteins = Math.max(0, (meal.totalProteins ?? 0) - nutrientsToRemove.proteins);
+            meal.totalCarbs = Math.max(0, (meal.totalCarbs ?? 0) - nutrientsToRemove.carbs);
+            meal.totalFats = Math.max(0, (meal.totalFats ?? 0) - nutrientsToRemove.fats);
+
+            // Actualizar la comida en JSON Server
+            this.updateUserMeals(currentMeals); // Asegúrate de llamar aquí
+        }
     }
 }
+
+  
 
 
 }
