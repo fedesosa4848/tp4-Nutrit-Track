@@ -21,6 +21,9 @@ export class FoodComponent implements OnInit {
   isLoggedIn: boolean = false;
   amountInGrams: number = 100; // Cantidad predeterminada para cálculo
 
+   
+
+
   constructor(private foodService: FoodService, private mealService: MealService, private authService: AuthService) {}
 
   ngOnInit(): void {
@@ -61,7 +64,10 @@ export class FoodComponent implements OnInit {
         const fat = food.foodNutrients.find(n => n.nutrientName === 'Total lipid (fat)')?.value || 0;
   
         this.foodNutritionalInfo[food.description] = { calories, protein, carbs, fat };
+        
       });
+
+      
     });
   }
   
@@ -81,11 +87,44 @@ export class FoodComponent implements OnInit {
     };
   }
 
+  selectFood(food: Food,amountInGrams:number) {
+    // Calcular los nutrientes para la cantidad especificada
+    const nutrientsForAmount = this.calculateNutrientsForAmount(food);
+    
+    // let newFood:Food = {
+    //   description: '',
+    //   ingredients: '',
+    //   amountInGrams : 0,
+    //   foodNutrients: [
+    //     { nutrientName: 'Energy', value: 0, unitName: 'kcal' },
+    //     { nutrientName: 'Protein', value: 0, unitName: 'g' },
+    //     { nutrientName: 'Carbohydrate, by difference', value: 0, unitName: 'g' },
+    //     { nutrientName: 'Total lipid (fat)', value: 0, unitName: 'g' }
+    //   ],
+    // };
+
+    // Asignar el alimento y sus nutrientes a newFood
+    let newFood:Food = { 
+      ...food, // Propiedades de food
+      amountInGrams:amountInGrams,
+      foodNutrients: [
+        { nutrientName: 'Energy', value: nutrientsForAmount.calories, unitName: 'kcal' },
+        { nutrientName: 'Protein', value: nutrientsForAmount.protein, unitName: 'g' },
+        { nutrientName: 'Carbohydrate, by difference', value: nutrientsForAmount.carbs, unitName: 'g' },
+        { nutrientName: 'Total lipid (fat)', value: nutrientsForAmount.fat, unitName: 'g' }
+      ]
+    };
+    return newFood; // Asegúrate de que esto se retorne
+
+  }
+  
+
   addFoodToMeal(food: Food) {
     if (this.selectedMeal && this.isLoggedIn) {
       // Calcular los nutrientes para la cantidad especificada
-      const nutrientsForAmount = this.calculateNutrientsForAmount(food);
-      this.mealService.addFoodToMeal(food, this.selectedMeal, this.amountInGrams);
+      // const nutrientsForAmount = this.calculateNutrientsForAmount(food);
+
+      this.mealService.addFoodToMeal(this.selectFood(food,this.amountInGrams), this.selectedMeal);
       this.selectedMeal = ''; // Reinicia la selección después de añadir
     } else if (!this.isLoggedIn) {
       console.error('Usuario no autenticado');

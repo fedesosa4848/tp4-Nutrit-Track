@@ -4,18 +4,19 @@ import { Food, Meal } from '../../interfaces/food.interface';
 import { CommonModule } from '@angular/common';
 import { MacronutrientChartComponent } from '../../macronutrient-chart/macronutrient-chart.component';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts'; 
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-meals',
   standalone: true,
-  imports: [CommonModule,MacronutrientChartComponent,CanvasJSAngularChartsModule],
+  imports: [CommonModule,MacronutrientChartComponent,CanvasJSAngularChartsModule,FormsModule],
   templateUrl: './meals.component.html',
   styleUrls: ['./meals.component.css'] 
 })
 export class MealsComponent implements OnInit {
 
   showCharts: boolean[] = []; // Arreglo para manejar el estado de los gráficos
-
+  
   meals: Meal[] = [];
   totalCalories: number = 0; //  variable para almacenar las calorías totales
 
@@ -39,6 +40,21 @@ export class MealsComponent implements OnInit {
     this.mealService.removeFoodFromMeal(meal.name, food.description); // Llama al método del servicio
     this.totalCalories = this.mealService.getTotalCalories(); // Actualiza las calorías totales
 }
+
+updateFoodAmount(meal: Meal, food: Food, newAmountInGrams: number): void {
+  if (newAmountInGrams < 0) {
+    console.error('La cantidad no puede ser negativa');
+    return;
+  }
+
+  this.mealService.updateFoodAmountInMeal(meal.name, food.description, newAmountInGrams ?? 0);
+  this.mealService.meals$.subscribe((updatedMeals) => {
+    this.meals = updatedMeals;
+    this.totalCalories = this.mealService.getTotalCalories(); // Actualiza las calorías totales
+  });
+}
+
+
 
 toggleChart(index: number) {
   this.showCharts[index] = !this.showCharts[index]; // Cambia el estado del gráfico correspondiente

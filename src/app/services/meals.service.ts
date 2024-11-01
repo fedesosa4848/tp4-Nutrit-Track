@@ -1,9 +1,11 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Meal, Food, UserMeals } from '../interfaces/food.interface';
 import { catchError } from 'rxjs/operators';
+import { FoodService } from './food.service';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -17,6 +19,13 @@ export class MealService {
     this.userId = localStorage.getItem('userToken');
     this.loadMeals(); // Cargar comidas al iniciar el servicio
   }
+
+  foodService = inject(FoodService);
+
+  private roundToZero(value: number): number {
+    const epsilon = 1e-10; // Umbral para considerar el valor como cero
+    return Math.abs(value) < epsilon ? 0 : value;
+}
 
   // Método para cargar las comidas desde JSON Server
   private loadMeals(): void {
@@ -70,56 +79,61 @@ export class MealService {
   }
 
   // Método para agregar un alimento a una comida
-  addFoodToMeal(food: Food, mealName: string, amountInGrams: number) {
+  // Método para agregar un alimento a una comida
+  addFoodToMeal(food: Food, mealName: string) {
     if (!this.userId) {
-        console.error('No hay un usuario autenticado');
-        return;
+      console.error('No hay un usuario autenticado');
+      return;
     }
 
     const currentMeals = this.mealsSubject.getValue();
     const meal = currentMeals.find(m => m.name === mealName);
 
     if (meal) {
-        // Agregar alimento a la comida existente
-        meal.foods.push({
-            ...food,
-            amountInGrams // Aquí añadimos la cantidad en gramos al alimento
-        });
+      // Agregar alimento a la comida existente
+      meal.foods.push(food); // No es necesario añadir amountInGrams
 
-        const nutrients = this.calculateNutrients(food, amountInGrams);
-        meal.totalCalories += nutrients.calories;
-        meal.totalProteins = (meal.totalProteins || 0) + nutrients.proteins;
-        meal.totalCarbs = (meal.totalCarbs || 0) + nutrients.carbs;
-        meal.totalFats = (meal.totalFats || 0) + nutrients.fats;
+      // Calcular nutrientes del alimento y actualizar totales
+      const nutrients = this.calculateNutrients(food);
+      meal.totalCalories += nutrients.calories;
+      meal.totalProteins = (meal.totalProteins || 0) + nutrients.proteins;
+      meal.totalCarbs = (meal.totalCarbs || 0) + nutrients.carbs;
+      meal.totalFats = (meal.totalFats || 0) + nutrients.fats;
 
-        // Actualizar la comida en JSON Server
-        this.updateUserMeals(currentMeals);
+      // Actualizar la comida en JSON Server
+      this.updateUserMeals(currentMeals);
     } else {
-        // Crear nueva comida si no existe
-        const newMeal: Meal = {
-            name: mealName,
-            foods: [{
-                ...food,
-                amountInGrams // Aquí añadimos la cantidad en gramos al alimento
-            }],
-            totalCalories: 0,
-            totalProteins: 0,
-            totalCarbs: 0,
-            totalFats: 0,
-        };
+      // Crear nueva comida si no existe
+      const newMeal: Meal = {
+        name: mealName,
+        foods: [food], // No es necesario añadir amountInGrams
+        totalCalories: 0,
+        totalProteins: 0,
+        totalCarbs: 0,
+        totalFats: 0,
+      };
 
-        // Calcular nutrientes del nuevo alimento y agregar
-        const nutrients = this.calculateNutrients(food, amountInGrams);
-        newMeal.totalCalories = (newMeal.totalCalories ?? 0) + nutrients.calories;
-        newMeal.totalProteins = (newMeal.totalProteins ?? 0) + nutrients.proteins;
-        newMeal.totalCarbs = (newMeal.totalCarbs ?? 0) + nutrients.carbs;
-        newMeal.totalFats = (newMeal.totalFats ?? 0) + nutrients.fats;
+      // Calcular nutrientes del nuevo alimento y agregar
+      const nutrients = this.calculateNutrients(food);
+      newMeal.totalCalories = nutrients.calories;
+      newMeal.totalProteins = nutrients.proteins;
+      newMeal.totalCarbs = nutrients.carbs;
+      newMeal.totalFats = nutrients.fats;
 
-        // Guardar la nueva comida en JSON Server
-        currentMeals.push(newMeal);
-        this.updateUserMeals(currentMeals);
+      // Guardar la nueva comida en JSON Server
+      currentMeals.push(newMeal);
+      this.updateUserMeals(currentMeals);
     }
-}
+  }
+
+  private calculateNutrients(food: Food) {
+    const calories = food.foodNutrients.find(n => n.nutrientName === 'Energy')?.value || 0;
+    const proteins = food.foodNutrients.find(n => n.nutrientName === 'Protein')?.value || 0;
+    const carbs = food.foodNutrients.find(n => n.nutrientName === 'Carbohydrate, by difference')?.value || 0;
+    const fats = food.foodNutrients.find(n => n.nutrientName === 'Total lipid (fat)')?.value || 0;
+
+    return { calories, proteins, carbs, fats };
+  }
 
 
   getTotalCalories(): number {
@@ -127,14 +141,6 @@ export class MealService {
     return currentMeals.reduce((total, meal) => total + meal.totalCalories, 0);
   }
 
-  private calculateNutrients(food: Food, amountInGrams: number) {
-    const calories = (food.foodNutrients.find(n => n.nutrientName === 'Energy')?.value || 0) * (amountInGrams / 100);
-    const proteins = (food.foodNutrients.find(n => n.nutrientName === 'Protein')?.value || 0) * (amountInGrams / 100);
-    const carbs = (food.foodNutrients.find(n => n.nutrientName === 'Carbohydrate, by difference')?.value || 0) * (amountInGrams / 100);
-    const fats = (food.foodNutrients.find(n => n.nutrientName === 'Total lipid (fat)')?.value || 0) * (amountInGrams / 100);
-
-    return { calories, proteins, carbs, fats };
-  }
 
   private updateUserMeals(meals: Meal[]) {
     const userMeals: UserMeals = {
@@ -164,23 +170,75 @@ export class MealService {
             const amountInGrams = meal.foods[foodIndex].amountInGrams ?? 0;
 
             // Calcular los nutrientes a eliminar
-            const nutrientsToRemove = this.calculateNutrients(meal.foods[foodIndex], amountInGrams); 
+            const nutrientsToRemove = this.calculateNutrients(meal.foods[foodIndex]); 
 
             // Eliminar el alimento de la lista
             meal.foods.splice(foodIndex, 1);
             
             // Restar nutrientes asegurándote de que no sean undefined
             console.log(amountInGrams)
-            meal.totalCalories = Math.max(0, meal.totalCalories - nutrientsToRemove.calories); // Evitar negativos
-            meal.totalProteins = Math.max(0, (meal.totalProteins ?? 0) - nutrientsToRemove.proteins);
-            meal.totalCarbs = Math.max(0, (meal.totalCarbs ?? 0) - nutrientsToRemove.carbs);
-            meal.totalFats = Math.max(0, (meal.totalFats ?? 0) - nutrientsToRemove.fats);
-
+            meal.totalCalories = this.roundToZero(meal.totalCalories - nutrientsToRemove.calories);
+            meal.totalProteins = this.roundToZero((meal.totalProteins ?? 0) - nutrientsToRemove.proteins);
+            meal.totalCarbs = this.roundToZero((meal.totalCarbs ?? 0) - nutrientsToRemove.carbs);
+            meal.totalFats = this.roundToZero((meal.totalFats ?? 0) - nutrientsToRemove.fats);
             // Actualizar la comida en JSON Server
             this.updateUserMeals(currentMeals); // Asegúrate de llamar aquí
         }
     }
 }
+
+// Método para actualizar la cantidad de un alimento en una comida
+updateFoodAmountInMeal(mealName: string, foodDescription: string, newAmountInGrams: number): void {
+  if (!this.userId) {
+      console.error('No hay un usuario autenticado');
+      return;
+  }
+
+  const currentMeals = this.mealsSubject.getValue();
+  const mealIndex = currentMeals.findIndex(m => m.name === mealName);
+
+  if (mealIndex !== -1) {
+      const meal = currentMeals[mealIndex];
+      const foodIndex = meal.foods.findIndex(food => food.description === foodDescription);
+
+      if (foodIndex !== -1) {
+          const food = meal.foods[foodIndex];
+          const currentAmountInGrams = food.amountInGrams ?? 0;
+
+          if (newAmountInGrams < 0) {
+              console.error('La cantidad no puede ser negativa');
+              return;
+          }
+
+          // Obtener el alimento con nutrientes originales
+          this.foodService.getNutrientsForFood(foodDescription, currentAmountInGrams).subscribe(nutrientsOriginales => {
+              if (!nutrientsOriginales) return;
+
+              // Obtener el alimento con nutrientes ajustados para la nueva cantidad
+              this.foodService.getNutrientsForFood(foodDescription, newAmountInGrams).subscribe(nutrientsNuevos => {
+                  if (!nutrientsNuevos) return;
+
+                  // Actualizar la cantidad en gramos del alimento
+                  meal.foods[foodIndex] = { ...nutrientsNuevos, amountInGrams: newAmountInGrams };
+
+                  // Comparar y actualizar los totales de nutrientes
+                  meal.totalCalories = this.roundToZero(meal.totalCalories - nutrientsOriginales.foodNutrients[0].value + nutrientsNuevos.foodNutrients[0].value);
+                  meal.totalProteins = this.roundToZero((meal.totalProteins ?? 0) - nutrientsOriginales.foodNutrients[1].value + nutrientsNuevos.foodNutrients[1].value);
+                  meal.totalCarbs = this.roundToZero((meal.totalCarbs ?? 0) - nutrientsOriginales.foodNutrients[2].value + nutrientsNuevos.foodNutrients[2].value);
+                  meal.totalFats = this.roundToZero((meal.totalFats ?? 0) - nutrientsOriginales.foodNutrients[3].value + nutrientsNuevos.foodNutrients[3].value);
+
+                  // Guardar los cambios
+                  this.updateUserMeals(currentMeals);
+              });
+          });
+      }
+  }
+}
+
+
+
+
+
 
   
 

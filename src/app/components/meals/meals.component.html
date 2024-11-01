@@ -7,6 +7,17 @@
   <ul>
     <li *ngFor="let food of meal.foods">
       {{ food.description }} - Calorías: {{ getCalories(food) }}
+      {{ food.amountInGrams }} - Cantidad en gramos
+      <div>
+        <ng-container *ngIf="food.amountInGrams !== undefined">
+          <input 
+            type="number" 
+            [(ngModel)]="food.amountInGrams" 
+            [ngModelOptions]="{standalone: true}"
+          />
+          <button (click)="updateFoodAmount(meal, food, food.amountInGrams)">Modificar</button>
+        </ng-container>
+      </div>
       <button (click)="removeFood(meal, food)">Eliminar</button>
     </li>
   </ul>

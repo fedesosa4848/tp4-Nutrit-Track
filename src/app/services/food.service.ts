@@ -40,4 +40,38 @@ export class FoodService {
       foodNutrients: filteredNutrients
     };
   }
+
+  // En FoodService
+getNutrientsForFood(foodDescription: string, amountInGrams: number): Observable<Food | null> {
+  console.log(foodDescription)
+  return this.getFood(foodDescription).pipe(
+      map(foods => {
+          const food = foods.find(f => f.description === foodDescription);
+          if (!food) {
+              console.error('Alimento no encontrado');
+              return null;
+          }
+          
+          console.log(foodDescription)
+
+          // Escalar nutrientes según la cantidad en gramos especificada
+          const scaleFactor = amountInGrams / 100;
+          const adjustedNutrients = food.foodNutrients.map(nutrient => ({
+              ...nutrient,
+              value: nutrient.value * scaleFactor // Escala el valor del nutriente
+          }));
+
+          console.log(adjustedNutrients)
+          
+          return {
+              ...food,
+              amountInGrams,
+              foodNutrients: adjustedNutrients
+          };
+      })
+  );
+}
+
+
+  
 }

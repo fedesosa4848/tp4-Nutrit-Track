@@ -32,11 +32,39 @@
       "meals": [
         {
           "name": "BreakFast",
-          "foods": [],
-          "totalCalories": 0,
-          "totalProteins": 0,
-          "totalCarbs": 0,
-          "totalFats": 0
+          "foods": [
+            {
+              "description": "MILK",
+              "ingredients": "GRADE A MILK, VITAMIN D3.",
+              "foodNutrients": [
+                {
+                  "nutrientName": "Protein",
+                  "unitName": "G",
+                  "value": 37.5
+                },
+                {
+                  "nutrientName": "Total lipid (fat)",
+                  "unitName": "G",
+                  "value": 33.3
+                },
+                {
+                  "nutrientName": "Carbohydrate, by difference",
+                  "unitName": "G",
+                  "value": 54.2
+                },
+                {
+                  "nutrientName": "Energy",
+                  "unitName": "KCAL",
+                  "value": 670
+                }
+              ],
+              "amountInGrams": 1000
+            }
+          ],
+          "totalCalories": 670,
+          "totalProteins": 37.5,
+          "totalCarbs": 54.2,
+          "totalFats": 33.299999999999955
         },
         {
           "name": "Lunch",
