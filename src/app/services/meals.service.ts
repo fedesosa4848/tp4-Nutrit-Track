@@ -188,6 +188,7 @@ export class MealService {
 }
 
 // Método para actualizar la cantidad de un alimento en una comida
+// Método para actualizar la cantidad de un alimento en una comida
 updateFoodAmountInMeal(mealName: string, foodDescription: string, newAmountInGrams: number): void {
   if (!this.userId) {
       console.error('No hay un usuario autenticado');
@@ -203,40 +204,60 @@ updateFoodAmountInMeal(mealName: string, foodDescription: string, newAmountInGra
 
       if (foodIndex !== -1) {
           const food = meal.foods[foodIndex];
-          const currentAmountInGrams = food.amountInGrams ?? 0;
-
           if (newAmountInGrams < 0) {
               console.error('La cantidad no puede ser negativa');
               return;
           }
 
-          // Obtener el alimento con nutrientes originales
-          this.foodService.getNutrientsForFood(foodDescription, currentAmountInGrams).subscribe(nutrientsOriginales => {
-              if (!nutrientsOriginales) return;
+          // Obtener los nutrientes originales del alimento paso a paso
+          let energyOriginal = 0;
+          let proteinOriginal = 0;
+          let carbsOriginal = 0;
+          let fatsOriginal = 0;
 
-              // Obtener el alimento con nutrientes ajustados para la nueva cantidad
-              this.foodService.getNutrientsForFood(foodDescription, newAmountInGrams).subscribe(nutrientsNuevos => {
-                  if (!nutrientsNuevos) return;
-
-                  // Actualizar la cantidad en gramos del alimento
-                  meal.foods[foodIndex] = { ...nutrientsNuevos, amountInGrams: newAmountInGrams };
-
-                  // Comparar y actualizar los totales de nutrientes
-                  meal.totalCalories = this.roundToZero(meal.totalCalories - nutrientsOriginales.foodNutrients[0].value + nutrientsNuevos.foodNutrients[0].value);
-                  meal.totalProteins = this.roundToZero((meal.totalProteins ?? 0) - nutrientsOriginales.foodNutrients[1].value + nutrientsNuevos.foodNutrients[1].value);
-                  meal.totalCarbs = this.roundToZero((meal.totalCarbs ?? 0) - nutrientsOriginales.foodNutrients[2].value + nutrientsNuevos.foodNutrients[2].value);
-                  meal.totalFats = this.roundToZero((meal.totalFats ?? 0) - nutrientsOriginales.foodNutrients[3].value + nutrientsNuevos.foodNutrients[3].value);
-
-                  // Guardar los cambios
-                  this.updateUserMeals(currentMeals);
+          if (food.foodNutrients) {
+              food.foodNutrients.forEach(nutrient => {
+                  switch (nutrient.nutrientName) {
+                      case 'Energy':
+                          energyOriginal = nutrient.value;
+                          break;
+                      case 'Protein':
+                          proteinOriginal = nutrient.value;
+                          break;
+                      case 'Carbohydrate, by difference':
+                          carbsOriginal = nutrient.value;
+                          break;
+                      case 'Total lipid (fat)':
+                          fatsOriginal = nutrient.value;
+                          break;
+                  }
               });
+          }
+
+          // Obtener el alimento con nutrientes ajustados para la nueva cantidad
+          this.foodService.getNutrientsForFood(foodDescription, newAmountInGrams).subscribe(nutrientsNuevos => {
+              if (!nutrientsNuevos) return;
+
+              // Actualizar la cantidad en gramos del alimento
+              meal.foods[foodIndex] = { ...nutrientsNuevos, amountInGrams: newAmountInGrams };
+
+              console.log('Nutrientes originales:', { energyOriginal, proteinOriginal, carbsOriginal, fatsOriginal });
+              console.log('Nutrientes nuevos:', nutrientsNuevos);
+
+              // Comparar y actualizar los totales de nutrientes
+              meal.totalCalories = this.roundToZero(meal.totalCalories - energyOriginal + nutrientsNuevos.foodNutrients[0].value);
+              meal.totalProteins = this.roundToZero((meal.totalProteins ?? 0) - proteinOriginal + nutrientsNuevos.foodNutrients[1].value);
+              meal.totalCarbs = this.roundToZero((meal.totalCarbs ?? 0) - carbsOriginal + nutrientsNuevos.foodNutrients[2].value);
+              meal.totalFats = this.roundToZero((meal.totalFats ?? 0) - fatsOriginal + nutrientsNuevos.foodNutrients[3].value);
+
+              console.log(meal);
+
+              // Guardar los cambios
+              this.updateUserMeals(currentMeals);
           });
       }
   }
 }
-
-
-
 
 
 

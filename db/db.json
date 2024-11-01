@@ -34,37 +34,37 @@
           "name": "BreakFast",
           "foods": [
             {
-              "description": "MILK",
-              "ingredients": "GRADE A MILK, VITAMIN D3.",
+              "description": "BREAD",
+              "ingredients": "WATER, SALT, LARD, YEAST, SUGAR, FLOUR",
               "foodNutrients": [
                 {
                   "nutrientName": "Protein",
                   "unitName": "G",
-                  "value": 37.5
+                  "value": 10.7
                 },
                 {
                   "nutrientName": "Total lipid (fat)",
                   "unitName": "G",
-                  "value": 33.3
+                  "value": 5.36
                 },
                 {
                   "nutrientName": "Carbohydrate, by difference",
                   "unitName": "G",
-                  "value": 54.2
+                  "value": 66.1
                 },
                 {
                   "nutrientName": "Energy",
                   "unitName": "KCAL",
-                  "value": 670
+                  "value": 357
                 }
               ],
-              "amountInGrams": 1000
+              "amountInGrams": 100
             }
           ],
-          "totalCalories": 670,
-          "totalProteins": 37.5,
-          "totalCarbs": 54.2,
-          "totalFats": 33.299999999999955
+          "totalCalories": 10.7,
+          "totalProteins": 5.36,
+          "totalCarbs": 66.1,
+          "totalFats": 357
         },
         {
           "name": "Lunch",
